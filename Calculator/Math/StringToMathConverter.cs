@@ -9,6 +9,7 @@ namespace Calculator
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="DivideByZeroException"/>
+        /// <exception cref="OverflowException"/>
         public static MathOperand Convert(string input)
         {
             BracketsCheck(input);
@@ -20,6 +21,7 @@ namespace Calculator
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="DivideByZeroException"/>
+        /// <exception cref="OverflowException"/>
         static MathOperand ExpressionParse(string input, int startIndex, int endIndex)
         {
             int maxPriority = 3;

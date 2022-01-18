@@ -10,10 +10,10 @@ namespace Calculator.Tests
         [TestMethod()]
         public void AdditionTest()
         {
-            MathOperand[] inputFirstOperand = new MathOperand[] { 1, 25, 255, 153,  25};
-            MathOperand[] inputSecondOperand = new MathOperand[] { 1, 25, 255, 107, double.NaN };
+            MathOperand[] inputFirstOperand = new MathOperand[] { 1, 25, 255, 153,  0};
+            MathOperand[] inputSecondOperand = new MathOperand[] { 1, 25, 255, 107, double.MaxValue};
 
-            double[] expected = new double[] { 2, 50, 510, 260, double.NaN };
+            double[] expected = new double[] { 2, 50, 510, 260, double.MaxValue };
 
             double[] actual = new double[inputFirstOperand.Length];
             Addition[] operation = new Addition[inputFirstOperand.Length];
@@ -105,6 +105,33 @@ namespace Calculator.Tests
         public void BinaryExpressionTestException()
         {
             new Addition(25, null);
+        }
+
+
+        [ExpectedException(typeof(OverflowException))]
+        [TestMethod()]
+        public void AdditionTestException1()
+        {
+            Addition addition = new Addition(double.MaxValue, 1);
+            addition.Calculate();
+        }
+
+
+        [ExpectedException(typeof(OverflowException))]
+        [TestMethod()]
+        public void AdditionTestException2()
+        {
+            Addition addition = new Addition(-double.MaxValue * 0.75, -double.MaxValue * 0.75);
+            addition.Calculate();
+        }
+
+
+        [ExpectedException(typeof(OverflowException))]
+        [TestMethod()]
+        public void MultiplicationTestException()
+        {
+            Multiplication multiplication = new Multiplication(double.MaxValue, 1.1d);
+            multiplication.Calculate();
         }
     }
 }

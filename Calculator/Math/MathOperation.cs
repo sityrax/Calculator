@@ -33,9 +33,13 @@ namespace Calculator
         public Addition(MathOperand firstOperand, MathOperand secondOperand) : base(firstOperand, secondOperand) { }
 
 
+        ///<exception cref="OverflowException"/>
         public override double Calculate()
         {
-            return firstOperand + secondOperand;
+            double result = firstOperand + secondOperand;
+            if (double.MaxValue - firstOperand < secondOperand || double.MinValue - firstOperand > secondOperand)
+                throw new OverflowException("Result has too long number.");
+            return result;
         }
     }
 
@@ -59,9 +63,13 @@ namespace Calculator
         public Multiplication(MathOperand firstOperand, MathOperand secondOperand) : base(firstOperand, secondOperand) { }
 
 
+        ///<exception cref="OverflowException"/>
         public override double Calculate()
         {
-            return firstOperand * secondOperand;
+            double result = firstOperand * secondOperand;
+            if (double.IsInfinity(result))
+                throw new OverflowException("Result has too long number.");
+            return result;
         }
     }
 
@@ -70,6 +78,7 @@ namespace Calculator
     {
         ///<exception cref="ArgumentNullException"/>
         public Division(MathOperand firstOperand, MathOperand secondOperand) : base(firstOperand, secondOperand) { }
+
 
         /// <exception cref="DivideByZeroException"/>
         public override double Calculate()
