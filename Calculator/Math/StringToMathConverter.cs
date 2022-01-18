@@ -65,7 +65,8 @@ namespace Calculator
                                 if (startIndexExtraction > startIndex)
                                     try
                                     {
-                                        ExpressionParse(input, startIndex, startIndexExtraction - 1);
+                                        if (ExpressionParse(input, startIndex, startIndexExtraction - 1) is MathOperand number)
+                                            throw new ArgumentException($"Extra number '{number}' detected.");
                                     }
                                     catch (ArgumentNullException) { }
 

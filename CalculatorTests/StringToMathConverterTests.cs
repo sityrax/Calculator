@@ -47,6 +47,14 @@ namespace Calculator.Tests
 
         [ExpectedException(typeof(ArgumentException))]
         [TestMethod()]
+        public void ConvertTestExceptionSpace()
+        {
+            StringToMathConverter.Convert("1 900-((5+5+(2*(25-10)-5)*2)*(33-3)");
+        }
+
+
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod()]
         public void ConvertTestExceptionSymbol()
         {
             StringToMathConverter.Convert("1900-(5+5+(g 2*(25-10)-5)*2)*(33-3)");
