@@ -6,17 +6,17 @@ namespace Calculator
     {
         public static string Calculate(string input)
         {
-            string returns;
+            string result;
             try
             {
                 MathOperand mathOperand = StringToMathConverter.Convert(input);
-                returns = string.Concat("=", mathOperand.Value);
+                result = string.Concat("= ", mathOperand.Value);
             }
             catch (Exception x)
             {
-                returns = string.Concat(x.Message, "\nPleace, fix the problem and try again.");
+                result = string.Concat(x.Message, "\nPleace, fix the problem and try again.");
             }
-            return returns;
+            return result;
         }
     }
 }

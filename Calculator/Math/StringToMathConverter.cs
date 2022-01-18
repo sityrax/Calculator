@@ -81,7 +81,7 @@ namespace Calculator
         }
 
 
-        /// <returns>Number length</returns>
+        /// <returns>Number length.</returns>
         static int NumberParse(string input, int lastIndex)
         {
             if (lastIndex >= 0)
@@ -189,7 +189,7 @@ namespace Calculator
         }
 
 
-        /// <returns>Instance of MathOperand composed of expression in brackets</returns>
+        /// <returns>Instance of MathOperand composed of expression in brackets.</returns>
         /// <exception cref="ArgumentNullException"/>
         static MathOperand BracketsExpression(string input, int endIndex)
         {
@@ -204,7 +204,7 @@ namespace Calculator
         }
 
 
-        /// <returns>startIndex of expression in brackets</returns>
+        /// <returns>startIndex of expression in brackets.</returns>
         static int BracketsBorder(string input, int endIndex)
         {
             int nestingLevel = 0;

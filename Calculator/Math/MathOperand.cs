@@ -29,11 +29,11 @@ namespace Calculator
         public static implicit operator MathOperand(MathOperation expression) => new MathOperand(expression);
 
 
-        public override bool Equals(object mathOperand)
+        public override bool Equals(object obj)
         {
-            if (mathOperand is not MathOperand)
+            if (obj is MathOperand mathOperand)
+            return mathOperand.Value == this.Value;
                 return false;
-            return (mathOperand as MathOperand).Value == this.Value;
         }
 
 
