@@ -13,6 +13,7 @@
 x64/
 [Bb]in/
 [Oo]bj/
+.vs/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -43,3 +44,4 @@ x64/
 *.log
 *.svclog
 *.scc
+*.testlog
