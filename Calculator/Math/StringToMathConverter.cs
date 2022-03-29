@@ -70,7 +70,8 @@ namespace Calculator
                                     }
                                     catch (ArgumentNullException) { }
 
-                                return NumberExtraction(input, startIndexExtraction, currentIndex);
+                                string subNumber = input.Substring(startIndexExtraction, currentIndex - startIndexExtraction + 1);
+                                return double.Parse(subNumber);
                             }
                             throw new ArgumentException($"Invalid symbol '{input[currentIndex]}' detected.");
                     }
@@ -106,87 +107,6 @@ namespace Calculator
                 }
             else
                 return 0;
-        }
-
-
-        /// <summary>Extract a number from a string.</summary>
-        /// <exception cref="ArgumentException"/>
-        static double NumberExtraction(string input, int startIndex, int endIndex)
-        {
-            int decimalPoint = 0;
-            double outputNumber = 0;
-
-            for (int currentIndex = endIndex; currentIndex >= startIndex; currentIndex--)
-            {
-                int orderOfMagnitude = (endIndex - currentIndex) + 1;
-                double orderFactor = OrderFactor(orderOfMagnitude - decimalPoint);
-
-                switch (input[currentIndex])
-                {
-                    case '0':
-                        outputNumber += 0 * orderFactor;
-                        break;
-                    case '1':
-                        outputNumber += 1 * orderFactor;
-                        break;
-                    case '2':
-                        outputNumber += 2 * orderFactor;
-                        break;
-                    case '3':
-                        outputNumber += 3 * orderFactor;
-                        break;
-                    case '4':
-                        outputNumber += 4 * orderFactor;
-                        break;
-                    case '5':
-                        outputNumber += 5 * orderFactor;
-                        break;
-                    case '6':
-                        outputNumber += 6 * orderFactor;
-                        break;
-                    case '7':
-                        outputNumber += 7 * orderFactor;
-                        break;
-                    case '8':
-                        outputNumber += 8 * orderFactor;
-                        break;
-                    case '9':
-                        outputNumber += 9 * orderFactor;
-                        break;
-                    case ',':
-                        if (decimalPoint == 0)
-                        {
-                            orderFactor = OrderFactor(currentIndex - endIndex);
-                            decimalPoint = endIndex - currentIndex + 1;
-                            outputNumber *= orderFactor;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Unexpected symbol ',' detected.");
-                        }
-                        break;
-                    default:
-                        return outputNumber;
-                }
-            }
-            return outputNumber;
-        }
-
-
-        static double OrderFactor(int orderOfMagnitude)
-        {
-            decimal number = 1;
-            if(orderOfMagnitude >= 0)
-            for (int i = 1; i < orderOfMagnitude; i++)
-            {
-                number *= 10;
-            }
-            else
-                for (int i = -1; i >= orderOfMagnitude; i--)
-                {
-                    number /= 10;
-                }
-            return (double)number;
         }
 
 

@@ -89,50 +89,6 @@ namespace Calculator.Tests
 
 
         //[TestMethod()]
-        //public void NumberExtractionTest()
-        //{
-        //    string[] inputString = new[] { "123", "45", "3245", "9687 4234", "562 567", "456 ", "4 658", "4,658" };
-        //    int[] inputStartIndex = new[] { 0, 1, 1, 5, 3, 0, 0, 0, };
-        //    int[] inputEndIndex = new[] { 2, 1, 3, 8, 6, 3, 3, 4, };
-
-        //    double[] expected = new[] { 123, 5, 245, 4234, 567, 0, 65, 4.658 };
-
-        //    double[] actual = new double[inputString.Length];
-        //    for (int i = 0; i < inputString.Length; i++)
-        //    {
-        //        actual[i] = StringToMathConverter.NumberExtraction(inputString[i], inputStartIndex[i], inputEndIndex[i]);
-        //    }
-
-        //    CollectionAssert.AreEqual(expected, actual);
-        //}
-
-
-        //[ExpectedException(typeof(ArgumentException))]
-        //[TestMethod()]
-        //public void NumberExtractionTestException()
-        //{
-        //    StringToMathConverter.NumberExtraction("254,568,789", 0, 10);
-        //}
-
-
-        //[TestMethod()]
-        //public void OrderOfMagnitudeTest()
-        //{
-        //    int[] input = new[] { 1, 2, 3, 5, -1, -2, -3, -15 };
-
-        //    double[] expected = new[] { 1, 10, 100, 10000, 0.1d, 0.01d, 0.001d, 1e-15d };
-
-        //    double[] actual = new double[input.Length];
-        //    for (int i = 0; i < input.Length; i++)
-        //    {
-        //        actual[i] = StringToMathConverter.OrderFactor(input[i]);
-        //    }
-
-        //    CollectionAssert.AreEqual(expected, actual);
-        //}
-
-
-        //[TestMethod()]
         //public void BracketsBorderTest()
         //{
         //    string[] inputString = new[] { "(())", " (())", "35()", "(()", "())", "((()(()()))" };
