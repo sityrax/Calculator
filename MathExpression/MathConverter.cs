@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
+using MathExpression.MathOperations;
 
-namespace Calculator
+namespace MathExpression
 {
-    public class StringToMathConverter
+    public class MathConverter
     {
         /// <returns>Instance of MathOperand composed of input string.</returns>
         /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="DivideByZeroException"/>
         /// <exception cref="OverflowException"/>
-        public static MathOperand Convert(string input)
+        public static MathOperand StringToMathConvert(string input)
         {
             BracketsCheck(input);
             return ExpressionParse(input, 0, input.Length - 1);

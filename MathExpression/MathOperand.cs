@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Calculator
+namespace MathExpression
 {
     /// <summary>Structure containing a hierarchy of mathematical operations.</summary>
     public class MathOperand
@@ -32,8 +32,8 @@ namespace Calculator
         public override bool Equals(object obj)
         {
             if (obj is MathOperand mathOperand)
-            return mathOperand.Value == this.Value;
-                return false;
+                return mathOperand.Value == Value;
+            return false;
         }
 
 

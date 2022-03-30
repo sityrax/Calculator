@@ -1,6 +1,6 @@
 ﻿using System;
 using static System.Console;
-using static Calculator.Mediator;
+using ME = MathExpression;
 
 namespace Calculator
 {
@@ -11,7 +11,16 @@ namespace Calculator
             while (true)
             {
                 string input = InputAnalysis(args);
-                WriteLine(Calculate(input));
+                string calculationResult;
+                try
+                {
+                    calculationResult = ME::Calculator.Calculate(input).ToString();
+                }
+                catch (Exception x)
+                {
+                    calculationResult = string.Concat(x.Message, "\nPleace, fix the problem and try again.");
+                }
+                WriteLine(calculationResult);
             }
         }
 

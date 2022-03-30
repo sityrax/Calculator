@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MathExpression;
 using Calculator;
 using System;
 
@@ -30,7 +31,7 @@ namespace Calculator.Tests
             string[] actual = new string[inputString.Length];
             for (int i = 0; i < inputString.Length; i++)
             {
-                actual[i] = StringToMathConverter.Convert(inputString[i]).Value.ToString();
+                actual[i] = MathConverter.StringToMathConvert(inputString[i]).Value.ToString();
             }
 
             CollectionAssert.AreEqual(expected, actual);
@@ -41,7 +42,7 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTestExceptionBracket()
         {
-            StringToMathConverter.Convert("1900-((5+5+(2*(25-10)-5)*2)*(33-3)");
+            MathConverter.StringToMathConvert("1900-((5+5+(2*(25-10)-5)*2)*(33-3)");
         }
 
 
@@ -49,7 +50,7 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTestExceptionSpace()
         {
-            StringToMathConverter.Convert("1 900-((5+5+(2*(25-10)-5)*2)*(33-3)");
+            MathConverter.StringToMathConvert("1 900-((5+5+(2*(25-10)-5)*2)*(33-3)");
         }
 
 
@@ -57,7 +58,7 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTestExceptionSymbol()
         {
-            StringToMathConverter.Convert("1900-(5+5+(g 2*(25-10)-5)*2)*(33-3)");
+            MathConverter.StringToMathConvert("1900-(5+5+(g 2*(25-10)-5)*2)*(33-3)");
         }
 
 
@@ -65,7 +66,7 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTestExceptionExtraOperation()
         {
-            StringToMathConverter.Convert("1900-(5+5+(2*(25-10)-5*)*2)*(33-3)");
+            MathConverter.StringToMathConvert("1900-(5+5+(2*(25-10)-5*)*2)*(33-3)");
         }
 
 

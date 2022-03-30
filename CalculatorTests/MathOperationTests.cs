@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Calculator;
+using MathExpression.MathOperations;
+using MathExpression;
 using System;
 
 namespace Calculator.Tests
