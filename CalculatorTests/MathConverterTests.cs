@@ -6,7 +6,7 @@ using System;
 namespace Calculator.Tests
 {
     [TestClass()]
-    public class StringToMathConverterTests
+    public class MathConverterTests
     {
         [TestMethod()]
         public void ConvertTest()

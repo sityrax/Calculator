@@ -14,7 +14,8 @@ namespace MathExpression
         protected MathOperand firstOperand;
         protected MathOperand secondOperand;
 
-
+        ///<exception cref="OverflowException"/>
+        ///<exception cref="DivideByZeroException"/>
         ///<exception cref="ArgumentNullException"/>
         public BinaryExpression(MathOperand firstOperand, MathOperand secondOperand)
         {
