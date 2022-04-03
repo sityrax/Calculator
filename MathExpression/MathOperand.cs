@@ -10,8 +10,8 @@ namespace MathExpression
         {
             get
             {
-                double result = subExpression is null ? value : subExpression.Calculate();
-                return result;
+                    double result = subExpression is null ? value : subExpression.Calculate();
+                    return result;
             }
             set
             {
@@ -24,7 +24,12 @@ namespace MathExpression
         public MathOperand(double operand) => value = operand;
         public MathOperand(MathOperation expression) => subExpression = expression;
 
-        public static implicit operator double(MathOperand operand) => operand.Value;
+        public static implicit operator double(MathOperand operand)
+        {
+            if (operand is null)
+                throw new ArgumentNullException("Null operand detected.");
+            return  operand.Value;
+        }
         public static implicit operator MathOperand(double operand) => new MathOperand(operand);
         public static implicit operator MathOperand(MathOperation expression) => new MathOperand(expression);
 

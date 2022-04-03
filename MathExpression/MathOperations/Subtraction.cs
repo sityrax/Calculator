@@ -10,6 +10,10 @@ namespace MathExpression.MathOperations
 
         public override double Calculate()
         {
+            if (firstOperand is null)
+                firstOperand = 0;
+            if (secondOperand is null)
+                secondOperand = 0;
             return firstOperand - secondOperand;
         }
     }

@@ -19,8 +19,6 @@ namespace MathExpression
         ///<exception cref="ArgumentNullException"/>
         public BinaryExpression(MathOperand firstOperand, MathOperand secondOperand)
         {
-            if (firstOperand is null || secondOperand is null)
-                throw new ArgumentNullException("Null operand detected.");
             this.firstOperand = firstOperand;
             this.secondOperand = secondOperand;
         }

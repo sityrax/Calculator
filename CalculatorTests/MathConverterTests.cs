@@ -2,6 +2,7 @@
 using MathExpression;
 using Calculator;
 using System;
+using System.Diagnostics;
 
 namespace Calculator.Tests
 {
@@ -11,22 +12,25 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTest()
         {
-            string[] inputString = new[] { "1+2-3",
-                                           "5*7-2",
-                                           "5-7*2",
-                                           "1+(2-3)",
-                                           "5*(7-2)",
-                                           "5* (7-2)",
-                                           "7*(5+2)-3*5",
-                                           "125 + 225 * 3",
-                                           "7*(5+(2-3))*5",
-                                           "7*((5+(2-3))*5)",
-                                           "7*((5+(2-3))+5)",
-                                           "1900-(5+55)*(33-3)",
-                                           "90-((5+(25+20))-(11*3-3))",
-                                           "1900-(5+5+(2*(25-10)-5)*2)*(33-3)" };
+            string[] inputString = new[] { "1+2-3",          //simple expression with addition and substraction
+                                           "5*7-2",          //multiply and substruction
+                                           "5-7*2",          //another sequence 
+                                           "5*7--2",         //ignore wrong second minus
+                                           "-5-7*2",         //negative number without brackets
+                                           "1+(2-3)",        //simple expression with brackets
+                                           "5*(7-2)",        //multiply with brackets
+                                           "5*7-(-2)",       //negative number in brackets
+                                           "5* (7-2)",       //multiply with space and brackets
+                                           "5-(-7)*2",       //negative number in brackets between two operations
+                                           "7*(5+2)-3*5",           //expression in brackets between another expressions
+                                           "125 + 225 * 3",         //numbers higher order number
+                                           "7*(5+(2-3))*5",         //brackets inside brackets
+                                           "7*((5+(2-3))*5)",       //brackets inside brackets... inside brackets
+                                           "1900-(5+55)*(33-3)",                    //expression with two brackets
+                                           "90-((5+(25+20))-(11*3-3))",             //expression with two brackets inside brackets
+                                           "1900-(5+5+(2*(25-10)-5)*2)*(33-3)" };   //expression with brackets inside brackets with two brackets
 
-            string[] expected = new[] { "0", "33", "-9", "0", "25", "25", "34", "800", "140", "140", "63", "100", "70", "100" };
+            string[] expected = new[] { "0", "33", "-9", "33", "-19", "0", "25", "37", "25", "19", "34", "800", "140", "140", "100", "70", "100" };
 
             string[] actual = new string[inputString.Length];
             for (int i = 0; i < inputString.Length; i++)
@@ -66,7 +70,8 @@ namespace Calculator.Tests
         [TestMethod()]
         public void ConvertTestExceptionExtraOperation()
         {
-            MathConverter.StringToMathConvert("1900-(5+5+(2*(25-10)-5*)*2)*(33-3)");
+           MathOperand answer = MathConverter.StringToMathConvert("5++7-2");
+           double result = answer.Value;
         }
 
 

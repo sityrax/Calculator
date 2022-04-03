@@ -105,7 +105,8 @@ namespace Calculator.Tests
         [TestMethod()]
         public void BinaryExpressionTestException()
         {
-            new Addition(25, null);
+            Addition addition = new Addition(25, null);
+            addition.Calculate();
         }
 
 

@@ -14,7 +14,8 @@ namespace MathExpression
         public static MathOperand StringToMathConvert(string input)
         {
             BracketsCheck(input);
-            return ExpressionParse(input, 0, input.Length - 1);
+            string inputСompact = input.Replace(" ", string.Empty);
+            return ExpressionParse(inputСompact, 0, inputСompact.Length - 1);
         }
 
 
@@ -26,13 +27,15 @@ namespace MathExpression
         static MathOperand ExpressionParse(string input, int startIndex, int endIndex)
         {
             int maxPriority = 3;
+            if (startIndex > endIndex)
+            {
+                return null;
+            }
 
             for (int operationPriority = 0; operationPriority <= maxPriority; operationPriority++)
             {
                 for (int currentIndex = endIndex; currentIndex >= startIndex; currentIndex--)
                 {
-                    if (input[currentIndex] == ' ')
-                        continue;
                     switch (operationPriority)
                     {
                         case 0:
@@ -59,7 +62,7 @@ namespace MathExpression
                             break;
 
                         default:
-                                int numberLength = NumberParse(input, currentIndex);
+                                int numberLength = NumberParse(input, startIndex, currentIndex);
                             if (numberLength > 0)
                             {
                                 int startIndexExtraction = (currentIndex + 1) - numberLength;
@@ -77,7 +80,7 @@ namespace MathExpression
                             throw new ArgumentException($"Invalid symbol '{input[currentIndex]}' detected.");
                     }
                     if (input[currentIndex] == ')')
-                    currentIndex = BracketsBorder(input, currentIndex);
+                        currentIndex = BracketsBorder(input, currentIndex);
                 }
             }
             throw new ArgumentNullException("Missing operand in expression.");
@@ -85,9 +88,9 @@ namespace MathExpression
 
 
         /// <returns>Number length.</returns>
-        static int NumberParse(string input, int lastIndex)
+        static int NumberParse(string input, int firstIndex, int lastIndex)
         {
-            if (lastIndex >= 0)
+            if (lastIndex >= firstIndex)
                 switch (input[lastIndex])
                 {
                     case '0':
@@ -101,7 +104,7 @@ namespace MathExpression
                     case '8':
                     case '9':
                     case ',':
-                        int length = NumberParse(input, lastIndex - 1);
+                        int length = NumberParse(input, firstIndex, lastIndex - 1);
                         return ++length;
                     default:
                         return 0;
