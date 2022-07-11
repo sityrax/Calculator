@@ -1,154 +1,208 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MathExpression;
-using Calculator;
+using MathExpression.MathOperations;
 using System;
-using System.Diagnostics;
+using Moq;
 
-namespace Calculator.Tests
+namespace MathExpression.Tests
 {
     [TestClass()]
     public class MathConverterTests
     {
-        [TestMethod()]
-        public void ConvertTest()
+        Mock<IMathOperand> mathOperand;
+        IMathOperation[][] operationArray;
+        Mock<IMathNumberSystem> mathNumberSystem;
+        Mock<IMathOperation>[] mathOperation;
+
+        [TestInitialize]
+        public void MathConverterTestsStart()
         {
-            string[] inputString = new[] { "1+2-3",          //simple expression with addition and substraction
-                                           "5*7-2",          //multiply and substruction
-                                           "5-7*2",          //another sequence 
-                                           "5*7--2",         //ignore wrong second minus
-                                           "-5-7*2",         //negative number without brackets
-                                           "1+(2-3)",        //simple expression with brackets
-                                           "5*(7-2)",        //multiply with brackets
-                                           "5*7-(-2)",       //negative number in brackets
-                                           "5* (7-2)",       //multiply with space and brackets
-                                           "5-(-7)*2",       //negative number in brackets between two operations
-                                           "7*(5+2)-3*5",           //expression in brackets between another expressions
-                                           "125 + 225 * 3",         //numbers higher order number
-                                           "7*(5+(2-3))*5",         //brackets inside brackets
-                                           "7*((5+(2-3))*5)",       //brackets inside brackets... inside brackets
-                                           "1900-(5+55)*(33-3)",                    //expression with two brackets
-                                           "90-((5+(25+20))-(11*3-3))",             //expression with two brackets inside brackets
-                                           "1900-(5+5+(2*(25-10)-5)*2)*(33-3)" };   //expression with brackets inside brackets with two brackets
+            mathOperand = new Mock<IMathOperand>();
+            operationArray = new IMathOperation[2][];
+            operationArray[0] = new IMathOperation[2];
+            operationArray[1] = new IMathOperation[2];
 
-            string[] expected = new[] { "0", "33", "-9", "33", "-19", "0", "25", "37", "25", "19", "34", "800", "140", "140", "100", "70", "100" };
+            mathOperation = new Mock<IMathOperation>[6];
+            mathOperation[0] = new Mock<IMathOperation>();
+            mathOperation[1] = new Mock<IMathOperation>();
+            mathOperation[2] = new Mock<IMathOperation>();
+            mathOperation[3] = new Mock<IMathOperation>();
+            mathOperation[4] = new Mock<IMathOperation>();
+            mathOperation[5] = new Mock<IMathOperation>();
 
-            string[] actual = new string[inputString.Length];
-            for (int i = 0; i < inputString.Length; i++)
+            mathNumberSystem = new Mock<IMathNumberSystem>();
+        }
+
+        [TestMethod()]
+        public void ExpressionCheckParseTest()
+        {
+            //Arrange
+            string expression = "25-10";
+            Mock<IMathOperand> @return = new Mock<IMathOperand>();
+
+            mathOperation[0].Setup(x => x.CheckSymbol(expression, 2)).Returns(false);
+            mathOperation[1].Setup(x => x.CheckSymbol(expression, 2)).Returns(true);
+            mathOperation[0].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(),
+                                                         It.IsAny<IMathOperand>(), expression, 0, 2,
+                                                                                   expression.Length-1)).Returns(@return.Object);
+            mathOperation[1].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(), 
+                                                         It.IsAny<IMathOperand>(), expression, 0, 2, 
+                                                                                   expression.Length-1)).Returns(@return.Object);
+
+            operationArray[0] = new IMathOperation[] { mathOperation[0].Object, mathOperation[1].Object };
+            MathConverter mathConverter = new MathConverter(mathOperand.Object, mathNumberSystem.Object, operationArray);
+
+            //Act
+            mathConverter.ExpressionParse(expression, 0, expression.Length-1);
+
+            //Assert
+            mathOperation[0].Verify(x => x.CheckSymbol(expression, 2), Times.Once);
+            mathOperation[1].Verify(x => x.CheckSymbol(expression, 2), Times.Once);
+            mathOperation[0].Verify(x => x.OperationParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expression, 0, 2, expression.Length - 1), Times.Never);
+            mathOperation[1].Verify(x => x.OperationParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expression, 0, 2, expression.Length - 1), Times.Once);
+        }
+
+        [TestMethod()]
+        public void BracketsSkipExpressionParseTest()
+        {
+            //Arrange
+            string expression = "7-(25-10)*4";
+            Mock<IMathOperand> @return = new Mock<IMathOperand>();
+
+            mathOperation[0].Setup(x => x.CheckSymbol(expression, 5)).Returns(true);
+            mathOperation[1].Setup(x => x.CheckSymbol(expression, 1)).Returns(true);
+            mathOperation[0].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(),
+                                                         It.IsAny<IMathOperand>(), expression, 0, 5,
+                                                                                   expression.Length-1)).Returns(@return.Object);
+            mathOperation[1].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(),
+                                                         It.IsAny<IMathOperand>(), expression, 0, 1,
+                                                                                   expression.Length-1)).Returns(@return.Object);
+
+            operationArray[0] = new IMathOperation[] { mathOperation[0].Object, mathOperation[1].Object };
+            MathConverter mathConverter = new MathConverter(mathOperand.Object, mathNumberSystem.Object, operationArray);
+
+            //Act
+            mathConverter.ExpressionParse(expression, 0, expression.Length - 1);
+
+            //Assert
+            mathOperation[0].Verify(x => x.CheckSymbol(expression, 5), Times.Never);
+            mathOperation[1].Verify(x => x.CheckSymbol(expression, 1), Times.Once);
+            mathOperation[0].Verify(x => x.OperationParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expression, 0, 5, expression.Length - 1), Times.Never);
+            mathOperation[1].Verify(x => x.OperationParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expression, 0, 1, expression.Length - 1), Times.Once);
+        }
+
+        [TestMethod()]
+        public void BracketsExpressionParseTest()
+        {
+            //Arrange
+            string expression = "7-(25*(24+65)-(34+2)-10)*4";
+            Mock<IMathOperand> @return = new Mock<IMathOperand>();
+            mathNumberSystem.Setup(x => x.NumberCheck(expression, It.IsAny<int>(), It.IsAny<int>())).Returns(0);
+
+            mathOperation[0].Setup(x => x.CheckSymbol(expression, 24)).Returns(false);
+            mathOperation[1].Setup(x => x.CheckSymbol(expression, 1)).Returns(false);
+            mathOperation[2].Setup(x => x.CheckSymbol(expression, 20)).Returns(false);
+            mathOperation[3].Setup(x => x.CheckSymbol(expression, 5)).Returns(false);
+            mathOperation[4].Setup(x => x.CheckSymbol(expression, 9)).Returns(false);
+            mathOperation[5].Setup(x => x.CheckSymbol(expression, 17)).Returns(true);
+            mathOperation[5].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(),
+                                                         It.IsAny<IMathOperand>(), expression, 0, 17,
+                                                                                   expression.Length-1)).Returns(@return.Object);
+            operationArray[0] = new IMathOperation[] { mathOperation[0].Object,
+                                                       mathOperation[1].Object,
+                                                       mathOperation[2].Object };
+            operationArray[1] = new IMathOperation[] { mathOperation[3].Object,
+                                                       mathOperation[4].Object,
+                                                       mathOperation[5].Object };
+            MathConverter mathConverter = new MathConverter(mathOperand.Object, mathNumberSystem.Object, operationArray);
+
+            //Act
+            mathConverter.ExpressionParse(expression, 0, expression.Length - 1);
+
+            //Assert
+            mathOperation[0].Verify(x => x.CheckSymbol(expression, 24), Times.Once);
+            mathOperation[1].Verify(x => x.CheckSymbol(expression, 1),  Times.Once);
+            mathOperation[2].Verify(x => x.CheckSymbol(expression, 20), Times.Once);
+            mathOperation[3].Verify(x => x.CheckSymbol(expression, 5),  Times.Once);
+            mathOperation[4].Verify(x => x.CheckSymbol(expression, 9),  Times.Never);
+            mathOperation[5].Verify(x => x.CheckSymbol(expression, 17), Times.Once);
+            mathOperation[5].Verify(x => x.OperationParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expression, 15, 17, 18), Times.Once);
+        }
+
+        [TestMethod()]
+        public void NumberCheckExpressionParseTest()
+        {
+            //Arrange
+            string[] expressionCollection = new string[5];
+            expressionCollection[0] = "7,98";
+            expressionCollection[1] = "457";
+            expressionCollection[2] = "=.55687";
+            expressionCollection[3] = "= . 589,54";
+            expressionCollection[4] = " =-457";
+            Mock<IMathOperand> @return = new Mock<IMathOperand>();
+            mathOperation[0] = new Mock<IMathOperation>();
+            mathOperation[0].Setup(x => x.CheckSymbol(It.IsIn(expressionCollection), It.IsAny<int>())).Returns(false);
+
+            #region NumberCheck
+            mathNumberSystem.Setup(x => x.NumberCheck(expressionCollection[0], 0, 3)).Returns(4);
+            mathNumberSystem.Setup(x => x.NumberCheck(expressionCollection[1], 0, 2)).Returns(3);
+            mathNumberSystem.Setup(x => x.NumberCheck(expressionCollection[2], 0, 6)).Returns(5);
+            mathNumberSystem.Setup(x => x.NumberCheck(expressionCollection[3], 0, 9)).Returns(6);
+            mathNumberSystem.Setup(x => x.NumberCheck(expressionCollection[4], 0, 5)).Returns(3);
+            #endregion
+
+            #region NumberParse
+            mathNumberSystem.Setup(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[0], 4, 0, 3)).Returns(@return.Object);
+            mathNumberSystem.Setup(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[1], 3, 0, 2)).Returns(@return.Object);
+            mathNumberSystem.Setup(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[2], 5, 2, 7)).Returns(@return.Object);
+            mathNumberSystem.Setup(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[3], 6, 4, 9)).Returns(@return.Object);
+            mathNumberSystem.Setup(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[4], 3, 3, 5)).Returns(@return.Object);
+            #endregion
+
+            operationArray[0] = new IMathOperation[] { mathOperation[0].Object };
+            operationArray[1] = new IMathOperation[] { mathOperation[0].Object };
+            MathConverter mathConverter = new MathConverter(mathOperand.Object, mathNumberSystem.Object, operationArray);
+
+            //Act
+            foreach (var exp in expressionCollection)
             {
-                actual[i] = MathConverter.StringToMathConvert(inputString[i]).Value.ToString();
+                mathConverter.ExpressionParse(exp, 0, exp.Length - 1);
             }
 
-            CollectionAssert.AreEqual(expected, actual);
+            //Assert
+            #region Assert
+            mathNumberSystem.Verify(x => x.NumberCheck(expressionCollection[0], 0, 3), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberCheck(expressionCollection[1], 0, 2), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberCheck(expressionCollection[2], 0, 6), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberCheck(expressionCollection[3], 0, 9), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberCheck(expressionCollection[4], 0, 5), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[0], 4, 0, 3), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[1], 3, 0, 2), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[2], 5, 0, 6), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[3], 6, 0, 9), Times.Once);
+            mathNumberSystem.Verify(x => x.NumberParse(It.IsAny<IMathExpression>(), It.IsAny<IMathOperand>(), expressionCollection[4], 3, 0, 5), Times.Once);
+            #endregion
         }
 
-
-        [ExpectedException(typeof(ArgumentException))]
         [TestMethod()]
-        public void ConvertTestExceptionBracket()
+        public void StringToMathConvertTest()
         {
-            MathConverter.StringToMathConvert("1900-((5+5+(2*(25-10)-5)*2)*(33-3)");
+            //Arrange
+            string expression = " 7-(25*(24+65) -(34+ 2)-10) *4";
+            string expected = "7-(25*(24+65)-(34+2)-10)*4";
+            Mock<IMathOperand> @return = new Mock<IMathOperand>();
+
+            mathOperation[0].Setup(x => x.CheckSymbol(expected, It.IsAny<int>())).Returns(true);
+            mathOperation[0].Setup(x => x.OperationParse(It.IsAny<IMathExpression>(),
+                                                         It.IsAny<IMathOperand>(), expected, 0, expected.Length - 1,
+                                                                                   expected.Length - 1)).Returns(@return.Object);
+            operationArray[0] = new IMathOperation[] { mathOperation[0].Object, };
+            MathConverter mathConverter = new MathConverter(mathOperand.Object, mathNumberSystem.Object, operationArray);
+
+            //Act
+            mathConverter.StringToMathConvert(expression);
+
+            //Assert
+            mathOperation[0].Verify(x => x.CheckSymbol(expected, It.IsAny<int>()), Times.Once);
         }
-
-
-        [ExpectedException(typeof(ArgumentException))]
-        [TestMethod()]
-        public void ConvertTestExceptionSpace()
-        {
-            MathConverter.StringToMathConvert("1 900-((5+5+(2*(25-10)-5)*2)*(33-3)");
-        }
-
-
-        [ExpectedException(typeof(ArgumentException))]
-        [TestMethod()]
-        public void ConvertTestExceptionSymbol()
-        {
-            MathConverter.StringToMathConvert("1900-(5+5+(g 2*(25-10)-5)*2)*(33-3)");
-        }
-
-
-        [ExpectedException(typeof(ArgumentNullException))]
-        [TestMethod()]
-        public void ConvertTestExceptionExtraOperation()
-        {
-           MathOperand answer = MathConverter.StringToMathConvert("5++7-2");
-           double result = answer.Value;
-        }
-
-
-        //[TestMethod()]
-        //public void NumberParseTest()
-        //{
-        //    string[] input = new[] { "123", "45", "3245", "96874234", "562 567", "4658 " };
-
-        //    int[] inputPosition = new[] { 2, 1, 3, 7, 6, 4 };
-
-        //    int[] expected = new[] { 3, 2, 4, 8, 3, 0 };
-
-        //    int[] actual = new int[input.Length];
-        //    for (int i = 0; i < input.Length; i++)
-        //    {
-        //        actual[i] = StringToMathConverter.NumberParse(input[i], inputPosition[i]);
-        //    }
-
-        //    CollectionAssert.AreEqual(expected, actual);
-        //}
-
-
-        //[TestMethod()]
-        //public void BracketsBorderTest()
-        //{
-        //    string[] inputString = new[] { "(())", " (())", "35()", "(()", "())", "((()(()()))" };
-
-        //    int[] expected = new[] { 0, 1, 2, 1, 2, 1 };
-
-        //    int[] actual = new int[inputString.Length];
-        //    for (int i = 0; i < inputString.Length; i++)
-        //    {
-        //        actual[i] = StringToMathConverter.BracketsBorder(inputString[i], inputString[i].Length - 1);
-        //    }
-
-        //    CollectionAssert.AreEqual(expected, actual);
-        //}
-
-
-        //[TestMethod()]
-        //public void BracketsExpressionTest()
-        //{
-        //    string[] inputString = new[] { "(25-5)", "((35-5))", "(7-(4+5))" };
-
-        //    MathOperand[] expected = new MathOperand[] { 20, 30, -2 };
-
-        //    MathOperand[] actual = new MathOperand[inputString.Length];
-        //    for (int i = 0; i < inputString.Length; i++)
-        //    {
-        //        actual[i] = StringToMathConverter.BracketsExpression(inputString[i], inputString[i].Length - 1);
-        //    }
-
-        //    CollectionAssert.AreEqual(expected, actual);
-        //}
-
-
-        //[ExpectedException(typeof(ArgumentNullException))]
-        //[TestMethod()]
-        //public void BracketsExpressionTestException()
-        //{
-        //    StringToMathConverter.BracketsExpression("(ab)c)", 5);
-        //}
-
-
-        //[ExpectedException(typeof(ArgumentException))]
-        //[TestMethod()]
-        //public void BracketsCheckTestExceptionLeftBracket()
-        //{
-        //    StringToMathConverter.BracketsCheck("(( 5 443 + 7685)");
-        //}
-
-
-        //[ExpectedException(typeof(ArgumentException))]
-        //[TestMethod()]
-        //public void BracketsCheckTestExceptionRightBracket()
-        //{
-        //    StringToMathConverter.BracketsCheck("( 5 443) + 7685)");
-        //}
     }
 }

@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "Calculator.csproj", "{886EA9DD-C71A-4CDE-8CE7-CC887A6AC73A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorUser", "CalculatorUser.csproj", "{886EA9DD-C71A-4CDE-8CE7-CC887A6AC73A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorTests", "..\CalculatorTests\CalculatorTests.csproj", "{E6EAFC86-B64C-4D9E-B4D1-8A282C4B7E90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpression", "..\MathExpression\MathExpression.csproj", "{E1B7FAC7-C2AA-4757-804C-F4088AC6EBF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathExpression", "..\MathExpression\MathExpression.csproj", "{E1B7FAC7-C2AA-4757-804C-F4088AC6EBF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{87301ECD-ECF6-4F82-A668-D47DF0B4771D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{91CE427E-55E8-45A8-950B-E224DE26AED7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +34,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{886EA9DD-C71A-4CDE-8CE7-CC887A6AC73A} = {91CE427E-55E8-45A8-950B-E224DE26AED7}
+		{E6EAFC86-B64C-4D9E-B4D1-8A282C4B7E90} = {87301ECD-ECF6-4F82-A668-D47DF0B4771D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62619676-9C15-4F1E-B1D5-EF75A85514F5}
